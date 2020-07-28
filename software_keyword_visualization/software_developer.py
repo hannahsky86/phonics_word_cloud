@@ -6,68 +6,41 @@ from os import path
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np 
+
+from operator import itemgetter
 
 
 d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
 
 class SoftwareCareerAnalysis:
 
-    def __init__(self, key_words, other_words, file):
+    def __init__(self, word_rank):
+        self.word_rank = word_rank
 
-        self.key_words = key_words
-        self.other_words = other_words
-        self.file = file
+    def phonics_word_rank(self):
 
-    def software_key_word_analysis(self):
-        """Find the count of keyword each word in text"""
+        # word_rank_csv = pd.read_csv (r'/Users/hannahroach/Desktop/software_career_analysis/software_keyword_visualization/word-rank.txt', header = None)
+        # word_rank_csv.to_csv (r'/Users/hannahroach/Desktop/software_career_analysis/software_keyword_visualization/word-rank.csv', index=None)
+        
+        word_rank_df = pd.read_csv('/Users/hannahroach/Desktop/software_career_analysis/software_keyword_visualization/word-rank.csv')     
+        word_rank_df[1] = word_rank_df.reset_index().index
+        # print(word_rank_df)
+        word_rank_df_sorted = word_rank_df.sort_index(axis=0, ascending=True)
+        word_rank_df_sorted = word_rank_df_sorted.dropna(how='any').values.tolist()
+        # word_rank_df_sorted.columns = ["word","cnt"]
 
-        key_words = self.key_words
-        other_words = self.other_words
-        file = self.file
+        # max_frequency = max(word_rank_df_sorted["cnt"])
+        # word_rank_df_sorted["freq"] = (max_frequency-word_rank_df_sorted["cnt"])/max_frequency
+        # word_rank_df_sorted = word_rank_df_sorted[["word","freq"]]
+        # word_rank_df_sorted_list = word_rank_df_sorted.values.tolist()
+        # print(word_rank_df_sorted_list)
+        new_list = []
+        for x, y in word_rank_df_sorted:
+            new_list.append((x,y))
 
-        index_list = []
-        for kw in open(key_words, "r"):
-            for k in kw.split():
-                index_list.append(k)
-        program_languages_df = create_word_list(file, index_list)
-        # generate_bar_chart(program_languages_df.head(10), "figures/bar_chart_other_words_list.png")
-        generate_wordcloud(program_languages_df, "figures/word_cloud_program_languages.png")
-
-
-        # for ow in open(other_words, "r"):
-        #     for o in ow.split():
-        #         o = re.sub(r'\d', '', o)
-        #         o = o.replace(',', '').replace('.', '').strip()
-        #         index_list.append(o)
-
-        # complete_list_df = create_word_list(file, index_list)
-        # generate_bar_chart(complete_list_df.head(15), "figures/bar_chart_program_languages.png")
-        # generate_wordcloud(complete_list_df, "figures/word_cloud_software_words.png")
-
-
-def create_word_list(file, index_words):
-
-    word_list = []
-    for line in open(file, "r"):
-        for word in line.split():
-            for text in index_words:
-                if word == text:
-                    word_list.append(word)
-    word_cnt = Counter(word_list).most_common()
-    words_df = pd.DataFrame(word_cnt)
-    words_df.columns = ["Words", 'Counts']
-    return words_df
-
-
-def generate_bar_chart(words, name):
-
-    words.plot(kind = 'bar', x= "Words", y = "Counts", label="Word Count")
-    plt.xlabel('Words')
-    plt.ylabel('Number of Words')
-    plt.xticks(rotation=45)
-    plt.title("Occurrence of Words \n from Job Listings in Utah", weight = 'bold', size = 14)
-    plt.savefig(path.join(d,name),dpi=200, bbox_inches="tight", pad_inches=.2)
-
+        generate_wordcloud(new_list, "figures/word_rank_cloud.png")
+    
 
 
 def generate_wordcloud(words, name):
@@ -76,22 +49,20 @@ def generate_wordcloud(words, name):
     https://pngtree.com/so/aircraft-carrier
 
     """
-    text = str(words["Words"])
+    # text = str(words[0])
 
     WordCloud(
         width=850, height=550,
         background_color='black',
-        max_words = 20000,
+        max_words = 2000,
         repeat = True,
         stopwords=STOPWORDS,
         min_font_size=1,
-    ).generate(text).to_file(path.join(d,name))
+    ).generate_from_frequencies(words, is_list=True).to_file(path.join(d,name))
 
 
 if __name__ == "__main__":
     """"""
-    # sd_fig = 'software_developer_word_cloud.png'
-    file = ("/Users/hannahroach/Desktop/software_career_analysis/software_keyword_visualization/software_developer.txt")
-    sd_key_words = ("/Users/hannahroach/Desktop/software_career_analysis/software_keyword_visualization/developer_key_words.txt")
-    other_words = ("/Users/hannahroach/Desktop/software_career_analysis/software_keyword_visualization/other_software_terms.txt")
-    SoftwareCareerAnalysis(sd_key_words, other_words, file).software_key_word_analysis()
+
+    word_rank = "/Users/hannahroach/Desktop/software_career_analysis/software_keyword_visualization/word-rank1.txt"
+    SoftwareCareerAnalysis(word_rank).phonics_word_rank()
