@@ -23,8 +23,7 @@ class SoftwareCareerAnalysis:
         self.mask_image = path.join(d,'mask_image/ph_inv.png')
         self.save_image = path.join(d,"figures/phonics_cloud/white/ph_cloud.png")
         self.white_image = path.join(d,'mask_image/white.png')
-        self.second_image = path.join(d,"figures/phonics_cloud/white/second_image9.png")
-        
+        self.composite_image = path.join(d,"figures/phonics_cloud/white/second_image9.png")
         self.csv_input = path.join(d,'csv_input/sightwords.csv') 
         self.csv_output = path.join(d,'csv_output/ph.csv')
 
@@ -72,18 +71,10 @@ def generate_wordcloud(self, words):
 
     first_image = Image.open(self.white_image)
     second_image = Image.open(self.save_image)
-    # mask_image = Image.open(self.mask_image)
-
     mask = Image.open(self.mask_image).convert('L').resize(first_image.size)
     im = Image.composite(first_image, second_image, mask)
     
-    # mask = Image.new("L", mask_image.size, "white")
-    # im = Image.composite(second_image, first_image,  mask)
-    # im = Image.blend(im1, im2, 0.5)
-
-    # first_image.paste(second_image, box=(0,0), mask=second_image)
-    # paste() modifies the first PIL.Image.Image
-    im.save(self.second_image)
+    im.save(self.composite_image)
 
 
 if __name__ == "__main__":
