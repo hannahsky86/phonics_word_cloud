@@ -7,10 +7,10 @@ phonics_sound = "ph"
 background_color = "black"
 colormap = "bone"
 
-mask_image  = path.join(d,'mask_image/ph.png')
-white_image = path.join(d,'mask_image/white.png')
-cloud_image = path.join(d,'mask_image/cloud.png')
-composite_image = path.join(d,"figures/phonics_cloud/CMRmap/ph.png")
+mask_image  = path.join(d,'mask_image/ph.JPEG')
+white_image = path.join(d,'mask_image/white.JPEG')
+cloud_image = path.join(d,'mask_image/cloud.JPEG')
+composite_image = path.join(d,"figures/phonics_cloud/CMRmap/ph.JPEG")
 
 
 # Input/Output CSV files
@@ -20,3 +20,6 @@ text_input = path.join(d,'csv_input/text_files/ph(sample words- photo, dolphin).
 # csv_output = path.join(d,'csv_output/ph.csv')
 csv_input = path.join(d,'csv_input/ph_words.csv') 
 csv_output = path.join(d,'csv_output/ph_words.csv')
+
+
+text_file_dir = path.join(d,'csv_input/text_files/') 
