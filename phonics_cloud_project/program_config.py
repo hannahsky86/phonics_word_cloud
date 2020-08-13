@@ -3,14 +3,14 @@ import os
 
 d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
 
-phonics_sound = "ph"
-background_color = "black"
-colormap = "bone"
 
-mask_image  = path.join(d,'mask_image/ph.JPEG')
-white_image = path.join(d,'mask_image/white.JPEG')
-cloud_image = path.join(d,'mask_image/cloud.JPEG')
-composite_image = path.join(d,"figures/phonics_cloud/CMRmap/ph.JPEG")
+background_color = "black"
+# colormap = "bone"
+
+mask_image  = path.join(d,'mask_image/tch.PNG')
+white_image = path.join(d,'mask_image/white.PNG')
+cloud_image = path.join(d,'mask_image/cloud.PNG')
+# composite_image = path.join(d,"figures/phonics_cloud/CMRmap/ph.PNG")
 
 
 # Input/Output CSV files

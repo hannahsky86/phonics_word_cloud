@@ -11,8 +11,7 @@ import numpy as np
 from operator import itemgetter
 import csv
 import program_config as config
-from PIL import Image, ImageDraw, ImageFont, ImageFile
-# import Image as imgs
+from PIL import Image, ImageDraw, ImageFont, ImageFile, ImageFilter
 
 import random
 
@@ -61,42 +60,36 @@ def save_to_csv(lst, phonics_sound):
 
 def generate_wordcloud(self, words, phonics_sound):
 
-    W, H = (720,1080)
+    W, H = (7200,10800)
     msg = phonics_sound
-    im = Image.new("CMYK",(W,H),"black")
+    # im = Image.new("CMYK",(W,H),"black")
+    im = Image.new("L",(W,H),0)
     draw = ImageDraw.Draw(im)
-    fnt = ImageFont.truetype('/Library/Fonts/Arial.ttf', 400)
+    fnt = ImageFont.truetype('/Library/Fonts/Arial.ttf', 4000)
     w, h = draw.textsize(msg, font=fnt)
     draw.text(((W-w)/2,(H-h)/2), msg, fill="white", font=fnt)
-    im.save(config.mask_image, "JPEG", quality=80, optimize=True, progressive=True)
+    im.save(config.mask_image, dpi=(300,300))    
     mask = np.array(Image.open(config.mask_image))
 
-    wordcloud = WordCloud(
-        width=720, height=1080,
+    WordCloud(
+        width=7200, height=10800,
         background_color= config.background_color,
         max_words = 200,
         repeat = True,
         stopwords=STOPWORDS,
-        min_font_size=12,
-        max_font_size=100,
+        min_font_size=120,
+        max_font_size=1000,
         mask=mask, 
-        margin=5,
+        margin=25,
        colormap='CMRmap'
-    ).generate_from_frequencies(words, is_list=True).to_image().save(config.cloud_image, quality=100)
+    ).generate_from_frequencies(words, is_list=True).to_image().save(config.cloud_image, dpi=(300,300))
 
-    # plt.figure( figsize=(24,36), facecolor='k')
-    # plt.imshow(wordcloud)
-    # plt.savefig(config.cloud_image, facecolor='k', bbox_inches='tight')
-
-    # to_image().save(config.cloud_image, "JPEG", dpi=(900,900))
-
-    first_image = Image.open(config.white_image)
-    second_image = Image.open(config.cloud_image)
-    mask = Image.open(config.mask_image).convert('L')
-    im = Image.composite(first_image, wordcloud, mask)
-    # .resize((7200,10800))
-    image_output_filename = 'figures/phonics_cloud/CMRmap/'+str(phonics_sound)+'.jpg'
-    im.save(path.join(d,image_output_filename), "JPEG", dpi=(900,900))
+    first_image = Image.open(config.white_image).resize((7200,10800))
+    second_image = Image.open(config.cloud_image).resize((7200,10800))
+    mask = Image.open(config.mask_image).convert('L').resize((7200,10800)).filter(ImageFilter.BLUR)
+    final_image = Image.composite(first_image, second_image, mask)
+    image_output_filename = 'figures/phonics_cloud/CMRmap/'+str(phonics_sound)+'.PNG'
+    final_image.save(path.join(d,image_output_filename), dpi=(300,300))
 
 
 if __name__ == "__main__":
