@@ -11,6 +11,7 @@ import numpy as np
 from operator import itemgetter
 import csv
 import program_config as config
+import palettable
 from PIL import Image, ImageDraw, ImageFont, ImageFile, ImageFilter
 
 import random
@@ -62,7 +63,6 @@ def generate_wordcloud(self, words, phonics_sound):
 
     W, H = (7200,10800)
     msg = phonics_sound
-    # im = Image.new("CMYK",(W,H),"black")
     im = Image.new("L",(W,H),0)
     draw = ImageDraw.Draw(im)
     fnt = ImageFont.truetype('/Library/Fonts/Arial.ttf', 4000)
@@ -70,23 +70,26 @@ def generate_wordcloud(self, words, phonics_sound):
     draw.text(((W-w)/2,(H-h)/2), msg, fill="white", font=fnt)
     im.save(config.mask_image, dpi=(300,300))    
     mask = np.array(Image.open(config.mask_image))
+    # cmap = palettable.scientific.sequential.Hawaii_20.mpl_colormap
+    # cmap = palettable.colorbrewer.diverging.nipy_spectral.mpl_colormap
+    # newcmap = cmap.from_list('newcmap',list(map(cmap,range(30,256))), N=256) 
 
     WordCloud(
-        width=7200, height=10800,
+        width=W, height=H,
         background_color= config.background_color,
-        max_words = 200,
+        max_words = 1500,
         repeat = True,
         stopwords=STOPWORDS,
         min_font_size=120,
         max_font_size=1000,
         mask=mask, 
-        margin=25,
-       colormap='CMRmap'
+        margin=50,
+       colormap='Spectral'
     ).generate_from_frequencies(words, is_list=True).to_image().save(config.cloud_image, dpi=(300,300))
 
-    first_image = Image.open(config.white_image).resize((7200,10800))
-    second_image = Image.open(config.cloud_image).resize((7200,10800))
-    mask = Image.open(config.mask_image).convert('L').resize((7200,10800)).filter(ImageFilter.BLUR)
+    first_image = Image.open(config.white_image).resize((W,H))
+    second_image = Image.open(config.cloud_image).resize((W,H))
+    mask = Image.open(config.mask_image).convert('L').resize((W,H))
     final_image = Image.composite(first_image, second_image, mask)
     image_output_filename = 'figures/phonics_cloud/CMRmap/'+str(phonics_sound)+'.PNG'
     final_image.save(path.join(d,image_output_filename), dpi=(300,300))
