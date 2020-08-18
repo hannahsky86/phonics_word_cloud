@@ -1,8 +1,0 @@
-
-filth
-
-health
-
-stealth
-
-wealth

@@ -25,15 +25,18 @@ class SoftwareCareerAnalysis:
 
     def loop_through_text_files(self):
 
-        directory = path.join(config.d,'csv_input/text_files/') 
+        directory = path.join(config.d,'csv_input/text_files/todo/') 
+        phonics_sound='al'
+        directory_list = os.listdir(directory)
+        for filename in sorted(directory_list):
+            print(filename)
+            file_path = path.join(directory, filename) 
+            prep_word_cloud(self,file_path, phonics_sound) 
 
-        for filename in os.listdir(directory):
-            prep_word_cloud(self,filename) 
 
+def prep_word_cloud(self, file_path, phonics_sound):
 
-def prep_word_cloud(self, filename):
-
-    words_df = pd.read_csv(path.join(config.text_file_dir,filename) )     
+    words_df = pd.read_csv(file_path) 
     words_df.columns = ['word']
     words_df['len'] = words_df['word'].apply(len)
     words_df_sorted = words_df.sort_values(by=['len']).dropna(how='any').values.tolist()
@@ -43,9 +46,8 @@ def prep_word_cloud(self, filename):
         if len(x)>2:
             new_word_list.append((x,y))
 
-    filename = filename.strip('picture noun ')
-    filename = filename.strip('cvc medial ')
-    phonics_sound = filename[1:filename[1:5].find("'")+1]
+    # filename = filename.strip('picture noun ')
+    # phonics_sound = filename[1:filename.find("'")+1]
 
     save_to_csv(new_word_list, phonics_sound)
 
@@ -77,7 +79,7 @@ def generate_wordcloud(self, words, phonics_sound):
     WordCloud(
         width=W, height=H,
         background_color= config.background_color,
-        max_words = 1500,
+        max_words = 2000,
         repeat = True,
         stopwords=STOPWORDS,
         min_font_size=120,
